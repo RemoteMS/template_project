@@ -2,6 +2,8 @@ using UnityEngine;
 
 namespace Models.Characters.Base
 {
+    [RequireComponent(typeof(CharacterEffects))]
+    [RequireComponent(typeof(CharacterHealth), typeof(CharacterStats), typeof(CharacterMovement))]
     public abstract class Character : MonoBehaviour
     {
         public CharacterHealth Health { get; private set; }

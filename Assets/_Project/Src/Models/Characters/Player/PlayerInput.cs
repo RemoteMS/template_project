@@ -5,14 +5,14 @@ namespace Models.Characters.Player
     [RequireComponent(typeof(PlayerCharacter))]
     public class PlayerInput : MonoBehaviour
     {
-        private Vector2 movementInput;
-        private bool isSprinting;
+        private Vector2 _movementInput;
+        private bool _isSprinting;
 
         public Vector3 GetMovementDirection()
         {
-            return new Vector3(movementInput.x, 0, movementInput.y);
+            return new Vector3(_movementInput.x, 0, _movementInput.y);
         }
 
-        public bool IsSprinting => isSprinting;
+        public bool IsSprinting => _isSprinting;
     }
 }

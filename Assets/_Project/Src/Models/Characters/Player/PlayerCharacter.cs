@@ -1,7 +1,9 @@
 using Models.Characters.Base;
+using UnityEngine;
 
 namespace Models.Characters.Player
 {
+    [RequireComponent(typeof(PlayerInput))]
     public class PlayerCharacter : Character
     {
         private PlayerInput _input;
