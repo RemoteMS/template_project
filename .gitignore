@@ -476,3 +476,7 @@ FodyWeavers.xsd
 *.sln.iml
 
 /Assets/Samples
+
+!Assets/GameResources/*.meta
+!Assets/Editor/*.meta
+!Assets/ProjectSettings/*.meta
