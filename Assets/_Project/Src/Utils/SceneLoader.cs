@@ -1,9 +1,10 @@
 using System;
 using Cysharp.Threading.Tasks;
+using Reflex.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace _Project.Src.Utils
+namespace Utils
 {
     public static class SceneLoader
     {

@@ -1,7 +1,9 @@
-using _Project.Src.Utils;
+using Utils;
 using Cysharp.Threading.Tasks;
+using Reflex.Core;
 using UniRx;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 
 public class App
@@ -11,9 +13,6 @@ public class App
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void AutostartGame()
     {
-        // Application.targetFrameRate = 60;
-        // Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
         _instance = new App();
         _instance.RunGame();
     }
@@ -55,10 +54,19 @@ public class App
         // _uiRoot.ShowLoadingScreen();
         // _cachedSceneContainer?.Dispose();
 
-        await SceneLoader.LoadSceneAsync(Scenes.Boot);
+        await Addressables.LoadSceneAsync(Scenes.Boot, activateOnLoad: false);
 
         var progressSubject = new Subject<float>();
-        await SceneLoader.LoadSceneAsync(Scenes.Gameplay, progressSubject);
+
+        var asyncOperationHandle = Addressables.LoadSceneAsync(Scenes.Gameplay, activateOnLoad: false);
+
+        asyncOperationHandle.Completed += handle =>
+        {
+            ReflexSceneManager.PreInstallScene(handle.Result.Scene, builder => builder.AddSingleton("Beautiful"));
+            handle.Result.ActivateAsync();
+        };
+
+        await asyncOperationHandle;
 
         // waiting for 
         // await UniTask.Yield();
@@ -71,10 +79,19 @@ public class App
     {
         // _uiRoot.ShowLoadingScreen();
         // _cachedSceneContainer?.Dispose();
-        await SceneLoader.LoadSceneAsync(Scenes.Boot);
+        await Addressables.LoadSceneAsync(Scenes.Boot, activateOnLoad: false);
 
         var progressSubject = new Subject<float>();
-        await SceneLoader.LoadSceneAsync(Scenes.MainMenu, progressSubject);
+
+        var asyncOperationHandle = Addressables.LoadSceneAsync(Scenes.MainMenu, activateOnLoad: false);
+
+        asyncOperationHandle.Completed += handle =>
+        {
+            ReflexSceneManager.PreInstallScene(handle.Result.Scene, builder => builder.AddSingleton("Beautiful"));
+            handle.Result.ActivateAsync();
+        };
+
+        await asyncOperationHandle;
 
         // waiting for 
         // await UniTask.Yield();
