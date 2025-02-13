@@ -24,7 +24,8 @@ MonoBehaviour:
   - m_GUID: 99c9720ab356a0642a771bea13969a05
     m_Address: MainMenu
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a3864fc84521a49c4b864bcb796b0b4e
     m_Address: Boot
