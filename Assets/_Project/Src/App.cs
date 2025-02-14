@@ -4,6 +4,8 @@ using Reflex.Core;
 using UniRx;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using Views;
 using Object = UnityEngine.Object;
@@ -48,12 +50,22 @@ public class App
 
         if (sceneName == Scenes.Gameplay)
         {
+            await UnloadCurrentSceneAsync();
+            await AsyncLoadBoot();
             await AsyncLoadAndStartGameplay();
+
+            await UniTask.WaitForSeconds(6);
+
+            await UnloadCurrentSceneAsync();
+            await AsyncLoadBoot();
+            await AsyncLoadAndStartMainMenu();
+
             return;
         }
 
         if (sceneName == Scenes.MainMenu)
         {
+            await AsyncLoadBoot();
             await AsyncLoadAndStartMainMenu();
             return;
         }
@@ -63,20 +75,78 @@ public class App
             return;
         }
 #endif
+        await UnloadCurrentSceneAsync();
+        await AsyncLoadBoot();
         await AsyncLoadAndStartGameplay();
+    }
+
+
+    private SceneInstance? _currentSceneInstance;
+
+    private async UniTask LoadSceneAsync(string sceneAddress)
+    {
+        if (_currentSceneInstance.HasValue)
+        {
+            await Addressables.UnloadSceneAsync(_currentSceneInstance.Value).Task;
+        }
+
+        var loading = Addressables.LoadSceneAsync(sceneAddress);
+        _currentSceneInstance = await loading.Task;
+    }
+
+    private async UniTask UnloadCurrentSceneAsync()
+    {
+        if (_currentSceneInstance.HasValue)
+        {
+            await Addressables.UnloadSceneAsync(_currentSceneInstance.Value).Task;
+        }
+    }
+
+    private async UniTask LoadSceneAsyncWithOutOverride(string sceneAddress)
+    {
+        var loading = Addressables.LoadSceneAsync(sceneAddress);
+        await loading.Task;
+    }
+
+    private async UniTask LoadSceneAsyncWithOverride(string sceneAddress)
+    {
+        var loading = Addressables.LoadSceneAsync(sceneAddress);
+        _currentSceneInstance = await loading.Task;
+    }
+
+    private async UniTask AsyncLoadBoot()
+    {
+        var loading = Addressables.LoadSceneAsync(Scenes.Boot, activateOnLoad: false);
+        loading.Completed += async => { async.Result.ActivateAsync(); };
+
+        await loading.Task;
+    }
+
+    private async UniTask AsyncLoadAndStartMainMenu()
+    {
+        var loading = Addressables.LoadSceneAsync(Scenes.MainMenu, activateOnLoad: false);
+
+        loading.Completed += async =>
+        {
+            ReflexSceneManager.PreInstallScene(async.Result.Scene,
+                builder =>
+                {
+                    Debug.Log($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}");
+                    builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}");
+                });
+
+            async.Result.ActivateAsync();
+        };
+        _currentSceneInstance = await loading.Task;
     }
 
     private async UniTask AsyncLoadAndStartGameplay()
     {
-        _cachedSceneContainer?.Dispose();
+        var loading = Addressables.LoadSceneAsync(Scenes.Gameplay, activateOnLoad: false);
 
-        await Addressables.LoadSceneAsync(Scenes.Boot, activateOnLoad: false);
-
-        var asyncOperationHandle = Addressables.LoadSceneAsync(Scenes.Gameplay, activateOnLoad: false);
-
-        asyncOperationHandle.Completed += handle =>
+        loading.Completed += async =>
         {
-            ReflexSceneManager.PreInstallScene(handle.Result.Scene, builder =>
+            ReflexSceneManager.PreInstallScene(async.Result.Scene, builder =>
             {
                 builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartGameplay)}");
 
@@ -89,34 +159,8 @@ public class App
                 });
             });
 
-            handle.Result.ActivateAsync();
+            async.Result.ActivateAsync();
         };
-
-        await asyncOperationHandle;
-        Debug.Log($"Loading Gameplay scene complete!");
-    }
-
-    private async UniTask AsyncLoadAndStartMainMenu()
-    {
-        _cachedSceneContainer?.Dispose();
-
-        await Addressables.LoadSceneAsync(Scenes.Boot, activateOnLoad: false);
-
-        var asyncOperationHandle = Addressables.LoadSceneAsync(Scenes.MainMenu, activateOnLoad: false);
-
-        asyncOperationHandle.Completed += handle =>
-        {
-            ReflexSceneManager.PreInstallScene(handle.Result.Scene,
-                builder =>
-                {
-                    Debug.Log($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}");
-                    builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}");
-                });
-
-            handle.Result.ActivateAsync();
-        };
-
-        var a = await asyncOperationHandle;
-        Debug.Log($"Loading MainMenu scene complete!");
+        _currentSceneInstance = await loading.Task;
     }
 }

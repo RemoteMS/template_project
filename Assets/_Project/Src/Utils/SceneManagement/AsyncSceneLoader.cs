@@ -43,11 +43,11 @@ namespace Utils.SceneManagement
             _onSceneUnloaded.OnNext(sceneKey);
         }
 
-        public async UniTask ReloadSceneAsync(string sceneKey)
-        {
-            if (!_loadedScenes.ContainsKey(sceneKey)) return;
-            await UnloadSceneAsync(sceneKey);
-            await LoadSceneAsync(sceneKey);
-        }
+        // public async UniTask ReloadSceneAsync(string sceneKey)
+        // {
+        //     if (!_loadedScenes.ContainsKey(sceneKey)) return;
+        //     await UnloadSceneAsync(sceneKey);
+        //     await LoadSceneAsync(sceneKey);
+        // }
     }
 }
