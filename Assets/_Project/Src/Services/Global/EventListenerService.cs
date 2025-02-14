@@ -1,6 +1,5 @@
 using System;
 using DI;
-using Reflex.Attributes;
 
 namespace Services.Global
 {
@@ -16,7 +15,6 @@ namespace Services.Global
     public class EventListenerService : IEventListenerService, ITestListenerService, IDisposable
     {
         public LocalEvent _localEvent;
-
 
         public EventListenerService(LocalEvent localEvent)
         {

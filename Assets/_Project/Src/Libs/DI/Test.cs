@@ -25,9 +25,9 @@ namespace DI
 
             Debug.Log($"Resolver of {nameof(eventListenerService)} {eventListenerService._localEvent.Val.Value}");
 
-            var gameState = sceneContainer.Resolve<IGameState>();
+            // var gameState = sceneContainer.Resolve<IGameState>();
 
-            Debug.Log($"Resolver of {nameof(gameState)} {gameState.Contex.Count}");
+            // Debug.Log($"Resolver of {nameof(gameState)} {gameState.Contex.Count}");
 
             Debug.Log($"Resolver of local {nameof(_gameState)} {_gameState?.Contex?.Count}");
         }
