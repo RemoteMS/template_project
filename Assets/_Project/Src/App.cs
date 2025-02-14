@@ -35,19 +35,16 @@ public class App
     private App()
     {
         var asyncSceneLoader = new GameObject("[AsyncSceneLoader]");
-        Object.DontDestroyOnLoad(asyncSceneLoader.gameObject);
+        Object.DontDestroyOnLoad(asyncSceneLoader);
 
         var scopes = new GameObject("[SCOPE]");
-        Object.DontDestroyOnLoad(scopes.gameObject);
-
-        // Container rootContainer = ReflexContainer.Root;
+        Object.DontDestroyOnLoad(scopes);
     }
 
     private async void RunGame()
     {
 #if UNITY_EDITOR
         var sceneName = SceneManager.GetActiveScene().name;
-
 
         if (sceneName == Scenes.Gameplay)
         {
@@ -61,7 +58,7 @@ public class App
             return;
         }
 
-        if (sceneName != Scenes.Boot || sceneName != Scenes.TestScene)
+        if (sceneName != Scenes.Boot && sceneName != Scenes.TestScene)
         {
             return;
         }
@@ -69,75 +66,57 @@ public class App
         await AsyncLoadAndStartGameplay();
     }
 
-
     private async UniTask AsyncLoadAndStartGameplay()
     {
-        // _uiRoot.ShowLoadingScreen();
         _cachedSceneContainer?.Dispose();
 
         await Addressables.LoadSceneAsync(Scenes.Boot, activateOnLoad: false);
 
-        var progressSubject = new Subject<float>();
-
         var asyncOperationHandle = Addressables.LoadSceneAsync(Scenes.Gameplay, activateOnLoad: false);
+
+        asyncOperationHandle.Completed += handle =>
+        {
+            ReflexSceneManager.PreInstallScene(handle.Result.Scene, builder =>
+            {
+                builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartGameplay)}");
+
+                builder.AddSingleton(typeof(GameplayModelView), new[]
+                {
+                    typeof(GameplayModelView),
+                    typeof(IModelView),
+                    typeof(IDisposable),
+                    typeof(GameplayModelView)
+                });
+            });
+
+            handle.Result.ActivateAsync();
+        };
+
+        await asyncOperationHandle;
+        Debug.Log($"Loading Gameplay scene complete!");
+    }
+
+    private async UniTask AsyncLoadAndStartMainMenu()
+    {
+        _cachedSceneContainer?.Dispose();
+
+        await Addressables.LoadSceneAsync(Scenes.Boot, activateOnLoad: false);
+
+        var asyncOperationHandle = Addressables.LoadSceneAsync(Scenes.MainMenu, activateOnLoad: false);
 
         asyncOperationHandle.Completed += handle =>
         {
             ReflexSceneManager.PreInstallScene(handle.Result.Scene,
                 builder =>
                 {
-                    builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartGameplay)}");
-                    builder.AddSingleton(
-                        typeof(GameplayModelView)
-                        , new[]
-                        {
-                            typeof(GameplayModelView),
-                            typeof(IModelView), typeof(IDisposable),
-                            typeof(GameplayModelView)
-                        }
-                    );
+                    Debug.Log($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}");
+                    builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}");
                 });
+
             handle.Result.ActivateAsync();
         };
 
-
-        await asyncOperationHandle;
-        // _cachedSceneContainer = 
-
-        // waiting for 
-        // await UniTask.WaitForSeconds(10);
-
-        Debug.Log($"Loading Gameplay scene complete!");
-        progressSubject.Dispose();
-    }
-
-    private async UniTask AsyncLoadAndStartMainMenu()
-    {
-        // _uiRoot.ShowLoadingScreen();
-        _cachedSceneContainer?.Dispose();
-
-        await Addressables.LoadSceneAsync(Scenes.Boot, activateOnLoad: false);
-
-        var progressSubject = new Subject<float>();
-
-        var asyncOperationHandle = Addressables.LoadSceneAsync(Scenes.MainMenu, activateOnLoad: false);
-
-        asyncOperationHandle.Completed += handle =>
-        {
-            ReflexSceneManager.PreInstallScene(
-                handle.Result.Scene,
-                builder => { builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}"); });
-            handle.Result.ActivateAsync();
-        };
-
-        await asyncOperationHandle;
-
-        // waiting for 
-        // await UniTask.Yield();
-
+        var a = await asyncOperationHandle;
         Debug.Log($"Loading MainMenu scene complete!");
-        progressSubject.Dispose();
-
-        var gameObject = new GameObject();
     }
 }
