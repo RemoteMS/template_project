@@ -1,7 +1,8 @@
 using Reflex.Core;
-using Services.Global;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
+using Utils.GameObjectInstantiating;
 using Utils.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -37,7 +38,6 @@ public class App
 
         _sceneLoader = _rootContainer.Resolve<ISceneLoader>();
 
-
         var asyncSceneLoader = new GameObject("[AsyncSceneLoader]");
         Object.DontDestroyOnLoad(asyncSceneLoader);
 
@@ -47,6 +47,13 @@ public class App
 
     private async void RunGame()
     {
+        await Addressables.InitializeAsync().Task;
+
+        var audioManager = await GameObjectInstantiator.InstantiateAudioManager();
+
+        Debug.Log("audioManager.GetAwaiter IsCompleted");
+        Object.DontDestroyOnLoad(audioManager);
+
 #if UNITY_EDITOR
         var sceneName = SceneManager.GetActiveScene().name;
 

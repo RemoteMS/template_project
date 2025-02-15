@@ -1,5 +1,5 @@
 using System;
-using Reflex.Extensions;
+using Reflex.Attributes;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,14 +12,12 @@ namespace Views
 
         private readonly CompositeDisposable _disposables = new();
 
-        private GameplayModelView _gameplayModelView;
+        [Inject] [HideInInspector] public GameplayModelView _gameplayModelView;
 
         private void Start()
         {
-            var sceneContainer = gameObject.scene.GetSceneContainer();
-
-            _gameplayModelView = sceneContainer.Resolve<GameplayModelView>();
-
+            // var sceneContainer = gameObject.scene.GetSceneContainer();
+            // _gameplayModelView = sceneContainer.Resolve<GameplayModelView>();
 
             toMainMenuButton.OnClickAsObservable().Subscribe(
                 _ =>
