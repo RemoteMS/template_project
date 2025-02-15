@@ -4,6 +4,7 @@ using Services.Global;
 using Storage;
 using UniRx;
 using UnityEngine;
+using Utils.SceneManagement;
 
 namespace DI
 {
@@ -26,6 +27,8 @@ namespace DI
     {
         public void InstallBindings(ContainerBuilder builder)
         {
+            builder.AddSingleton(new SceneLoader(), new[] { typeof(ISceneLoader), typeof(IDisposable) });
+
             var gameStorage = new GameState();
             builder.AddSingleton(gameStorage, typeof(IGameState), typeof(IDisposable));
 

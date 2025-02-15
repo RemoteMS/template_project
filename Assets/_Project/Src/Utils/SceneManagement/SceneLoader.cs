@@ -8,7 +8,13 @@ using Views;
 
 namespace Utils.SceneManagement
 {
-    public class SceneLoader : IDisposable
+    public interface ISceneLoader
+    {
+        UniTask LoadGamePlay();
+        UniTask LoadMainMenu();
+    }
+
+    public class SceneLoader : ISceneLoader, IDisposable
     {
         private SceneInstance? _currentSceneInstance;
 
@@ -56,6 +62,13 @@ namespace Utils.SceneManagement
             {
                 Debug.Log($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}");
                 builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}");
+                builder.AddSingleton(typeof(MainMenuModelView), new[]
+                {
+                    typeof(MainMenuModelView),
+                    typeof(IModelView),
+                    typeof(IDisposable),
+                    typeof(IMainMenuModelView),
+                });
             });
 
             await _currentSceneInstance.Value.ActivateAsync();
@@ -76,15 +89,17 @@ namespace Utils.SceneManagement
                     typeof(GameplayModelView),
                     typeof(IModelView),
                     typeof(IDisposable),
-                    typeof(GameplayModelView)
+                    typeof(IGameplayModelView)
                 });
             });
 
             await _currentSceneInstance.Value.ActivateAsync();
         }
 
+
         public void Dispose()
         {
+            // TODO release managed resources here
         }
     }
 }

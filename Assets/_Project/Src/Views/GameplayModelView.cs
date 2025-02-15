@@ -2,6 +2,7 @@ using System;
 using Reflex.Attributes;
 using UniRx;
 using UnityEngine;
+using Utils.SceneManagement;
 
 namespace Views
 {
@@ -14,12 +15,16 @@ namespace Views
         public IReadOnlyReactiveProperty<int> TestProp => _testProp;
         private readonly ReactiveProperty<int> _testProp;
 
-        readonly CompositeDisposable _disposable = new CompositeDisposable();
+        private readonly CompositeDisposable _disposable = new CompositeDisposable();
+
+        private readonly ISceneLoader _sceneLoader;
 
         // add model
         [ReflexConstructor]
-        public GameplayModelView()
+        public GameplayModelView(ISceneLoader sceneLoader)
         {
+            _sceneLoader = sceneLoader;
+
             _testProp = new ReactiveProperty<int>();
 
             _testProp.AddTo(_disposable);
@@ -27,6 +32,7 @@ namespace Views
 
         public void GoToMainMenu()
         {
+            _sceneLoader.LoadMainMenu();
             Debug.Log("Go to main menu");
         }
 

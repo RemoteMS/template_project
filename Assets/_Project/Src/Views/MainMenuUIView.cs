@@ -6,26 +6,27 @@ using UnityEngine.UI;
 
 namespace Views
 {
-    public class GameplayUIView : MonoBehaviour, IDisposable
+    public class MainMenuUIView : MonoBehaviour, IDisposable
     {
         [SerializeField] Button toMainMenuButton;
 
         private readonly CompositeDisposable _disposables = new();
 
-        private GameplayModelView _gameplayModelView;
+
+        private MainMenuModelView _mainMenuModelView;
 
         private void Start()
         {
             var sceneContainer = gameObject.scene.GetSceneContainer();
 
-            _gameplayModelView = sceneContainer.Resolve<GameplayModelView>();
+            _mainMenuModelView = sceneContainer.Resolve<MainMenuModelView>();
 
 
             toMainMenuButton.OnClickAsObservable().Subscribe(
                 _ =>
                 {
-                    Debug.Log($"Gameplay UI View clicked");
-                    _gameplayModelView.GoToMainMenu();
+                    Debug.Log($"{nameof(MainMenuModelView)}  View clicked");
+                    _mainMenuModelView.GoToGamePlay();
                 }).AddTo(_disposables);
         }
 

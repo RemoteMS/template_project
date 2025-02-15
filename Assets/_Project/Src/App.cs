@@ -1,4 +1,5 @@
 using Reflex.Core;
+using Services.Global;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Utils.SceneManagement;
@@ -18,9 +19,10 @@ using Object = UnityEngine.Object;
 public class App
 {
     private static App _instance;
-    private Container _rootContainer;
+
+    private readonly Container _rootContainer;
     private Container _cachedSceneContainer;
-    private readonly SceneLoader _sceneLoader;
+    private readonly ISceneLoader _sceneLoader;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void AutostartGame()
@@ -31,7 +33,10 @@ public class App
 
     private App()
     {
-        _sceneLoader = new SceneLoader();
+        _rootContainer = CreateProjectContainer.Create();
+
+        _sceneLoader = _rootContainer.Resolve<ISceneLoader>();
+
 
         var asyncSceneLoader = new GameObject("[AsyncSceneLoader]");
         Object.DontDestroyOnLoad(asyncSceneLoader);
@@ -48,6 +53,7 @@ public class App
         if (sceneName == Scenes.Gameplay)
         {
             await _sceneLoader.LoadGamePlay();
+
             return;
         }
 
