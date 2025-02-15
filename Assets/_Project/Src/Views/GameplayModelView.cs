@@ -1,6 +1,7 @@
 using System;
 using Reflex.Attributes;
 using UniRx;
+using UnityEngine;
 
 namespace Views
 {
@@ -22,6 +23,11 @@ namespace Views
             _testProp = new ReactiveProperty<int>();
 
             _testProp.AddTo(_disposable);
+        }
+
+        public void GoToMainMenu()
+        {
+            Debug.Log("Go to main menu");
         }
 
         public void Dispose()

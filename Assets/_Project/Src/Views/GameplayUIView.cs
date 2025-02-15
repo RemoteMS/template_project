@@ -19,15 +19,15 @@ namespace Views
         private void Start()
         {
             var sceneContainer = gameObject.scene.GetSceneContainer();
-            
+
             _gameplayModelView = sceneContainer.Resolve<GameplayModelView>();
 
 
             toMainMenuButton.OnClickAsObservable().Subscribe(
                 _ =>
                 {
-                    // _localEvent.Val.Value++;
-                    Debug.Log($"Gameplay UI View clicked ");
+                    Debug.Log($"Gameplay UI View clicked");
+                    _gameplayModelView.GoToMainMenu();
                 }).AddTo(_disposables);
         }
 
