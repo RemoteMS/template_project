@@ -26,6 +26,7 @@ namespace Utils.SceneManagement
         {
             await UnloadCurrentSceneAsync();
             await AsyncLoadBoot();
+            await UnloadCurrentSceneAsync();
             await AsyncLoadAndStartGameplay();
         }
 
@@ -33,6 +34,7 @@ namespace Utils.SceneManagement
         {
             await UnloadCurrentSceneAsync();
             await AsyncLoadBoot();
+            await UnloadCurrentSceneAsync();
             await AsyncLoadAndStartMainMenu();
         }
 
@@ -48,8 +50,8 @@ namespace Utils.SceneManagement
         private async UniTask AsyncLoadBoot()
         {
             var loading = Addressables.LoadSceneAsync(Scenes.Boot, activateOnLoad: false);
-            var sceneInstance = await loading.Task;
-            await sceneInstance.ActivateAsync();
+            _currentSceneInstance = await loading.Task;
+            await _currentSceneInstance.Value.ActivateAsync();
         }
 
         private async UniTask AsyncLoadAndStartMainMenu()
