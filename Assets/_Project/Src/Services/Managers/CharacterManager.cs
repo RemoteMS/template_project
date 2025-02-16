@@ -26,11 +26,11 @@ namespace Services.Managers
         public Character GetClosestCharacter(Vector3 position, float maxRange)
         {
             Character closest = null;
-            float closestDistance = maxRange;
+            var closestDistance = maxRange;
 
-            foreach (Character character in _characters)
+            foreach (var character in _characters)
             {
-                float distance = Vector3.Distance(position, character.transform.position);
+                var distance = Vector3.Distance(position, character.transform.position);
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;

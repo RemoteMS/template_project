@@ -31,6 +31,12 @@ namespace DI
             builder.AddSingleton(typeof(DataLoader), new[] { typeof(IDataLoader), typeof(DataLoader) });
             builder.AddSingleton(new SceneLoader(),  new[] { typeof(ISceneLoader), typeof(IDisposable) });
 
+            builder.AddSingleton(typeof(InputManager), new[]
+            {
+                typeof(IInputManager), typeof(IDisposable),
+            });
+
+
             var gameStorage = new GameState();
             builder.AddSingleton(gameStorage, typeof(IGameState), typeof(IDisposable));
 
@@ -40,10 +46,6 @@ namespace DI
 
             builder.AddSingleton<IAudioService>(_ => new AudioService());
 
-            builder.AddSingleton(typeof(InputManagerDebug), new[]
-            {
-                typeof(IInputManager), typeof(IDisposable),
-            });
 
             builder.AddSingleton(typeof(EventListenerService), new Type[]
             {

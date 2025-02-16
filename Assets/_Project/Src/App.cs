@@ -1,7 +1,6 @@
 using Reflex.Core;
 using Services.Global;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using Utils.GameObjectInstantiating;
 using Utils.SceneManagement;
