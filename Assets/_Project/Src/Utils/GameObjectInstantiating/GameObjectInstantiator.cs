@@ -10,8 +10,6 @@ namespace Utils.GameObjectInstantiating
         {
             var asyncOperationHandle = Addressables.InstantiateAsync("AudioManager.prefab");
 
-
-            GameObject gameObject = await asyncOperationHandle.Task;
             return await asyncOperationHandle;
         }
     }

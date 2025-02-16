@@ -4,6 +4,7 @@ using Services.Global;
 using Storage;
 using UniRx;
 using UnityEngine;
+using Utils.GameObjectInstantiating;
 using Utils.SceneManagement;
 
 namespace DI
@@ -27,7 +28,8 @@ namespace DI
     {
         public void InstallBindings(ContainerBuilder builder)
         {
-            builder.AddSingleton(new SceneLoader(), new[] { typeof(ISceneLoader), typeof(IDisposable) });
+            builder.AddSingleton(typeof(DataLoader), new[] { typeof(IDataLoader), typeof(DataLoader) });
+            builder.AddSingleton(new SceneLoader(),  new[] { typeof(ISceneLoader), typeof(IDisposable) });
 
             var gameStorage = new GameState();
             builder.AddSingleton(gameStorage, typeof(IGameState), typeof(IDisposable));
@@ -36,9 +38,9 @@ namespace DI
             var localEvent = new LocalEvent();
             builder.AddSingleton(localEvent, typeof(ILocalEvent), typeof(LocalEvent));
 
-            builder.AddSingleton<IAudioService>(_ => { return new AudioService(); });
+            builder.AddSingleton<IAudioService>(_ => new AudioService());
 
-            builder.AddSingleton(typeof(InputManager), new[]
+            builder.AddSingleton(typeof(InputManagerDebug), new[]
             {
                 typeof(IInputManager), typeof(IDisposable),
             });

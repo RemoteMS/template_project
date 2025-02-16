@@ -1,4 +1,5 @@
 using Reflex.Core;
+using Services.Global;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
@@ -24,6 +25,7 @@ public class App
     private readonly Container _rootContainer;
     private Container _cachedSceneContainer;
     private readonly ISceneLoader _sceneLoader;
+    private IInputManager _input;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void AutostartGame()
@@ -43,16 +45,24 @@ public class App
 
         var scopes = new GameObject("[SCOPE]");
         Object.DontDestroyOnLoad(scopes);
+
+        _input = _rootContainer.Resolve<IInputManager>();
     }
 
     private async void RunGame()
     {
-        await Addressables.InitializeAsync().Task;
+        var dataLoader = _rootContainer.Resolve<IDataLoader>();
+        await dataLoader.InitializeAsync();
+        await dataLoader.LoadMainAudioMixer();
 
         var audioManager = await GameObjectInstantiator.InstantiateAudioManager();
 
         Debug.Log("audioManager.GetAwaiter IsCompleted");
         Object.DontDestroyOnLoad(audioManager);
+
+        var audioService = _rootContainer.Resolve<IAudioService>();
+        audioService.Bind(audioManager);
+        audioService.InjectAudioMixer(dataLoader.audioMixer);
 
 #if UNITY_EDITOR
         var sceneName = SceneManager.GetActiveScene().name;
