@@ -14,12 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GroupName: Inputs
   m_GUID: a4f0e096afc7242999f7283eff116c12
-  m_SerializeEntries:
-  - m_GUID: 052faaac586de48259a63d0c4782560b
-    m_Address: Assets/_Project/Src/Config/Inputs/InputSystem_Actions.inputactions
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 6207422ce53bc4cd1a70bcac69fdacd0, type: 2}
   m_SchemaSet:

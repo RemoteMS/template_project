@@ -1,5 +1,4 @@
 using System;
-using DI;
 
 namespace Services.Global
 {
@@ -14,14 +13,6 @@ namespace Services.Global
 
     public class EventListenerService : IEventListenerService, ITestListenerService, IDisposable
     {
-        public LocalEvent _localEvent;
-
-        public EventListenerService(LocalEvent localEvent)
-        {
-            _localEvent = localEvent;
-        }
-
-
         public void Dispose()
         {
         }

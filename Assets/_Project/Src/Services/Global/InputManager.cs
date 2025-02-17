@@ -10,10 +10,13 @@ namespace Services.Global
         IObservable<Vector2> MoveSubject { get; }
         IObservable<Unit> FireSubject { get; }
         IObservable<Unit> SubmitSubject { get; }
+        IObservable<Unit> SingleSelectSubject { get; }
+        IObservable<Unit> AttackClickSubject { get; }
     }
 
-    public class InputManager : IInputManager, IDisposable, DefaultInputActions.IPlayerActions,
-        DefaultInputActions.IUIActions
+    public class InputManager : IInputManager, IDisposable,
+        GameInputActions.IPlayerActions,
+        GameInputActions.IUIActions
     {
         public IObservable<Vector2> MoveSubject => _moveSubject;
         private Subject<Vector2> _moveSubject;
@@ -24,16 +27,21 @@ namespace Services.Global
         public IObservable<Unit> SubmitSubject => _submitSubject;
         private Subject<Unit> _submitSubject;
 
+        public IObservable<Unit> SingleSelectSubject => _singleSelectSubject;
+        private Subject<Unit> _singleSelectSubject;
 
-        private readonly DefaultInputActions _inputActions;
+        public IObservable<Unit> AttackClickSubject => _attackClickSubject;
+        private Subject<Unit> _attackClickSubject;
+
+        private readonly GameInputActions _inputActions;
 
         private readonly CompositeDisposable _disposables = new();
 
         public InputManager()
         {
             Debug.LogWarning("InputManager ctor");
-            
-            _inputActions = new DefaultInputActions();
+
+            _inputActions = new GameInputActions();
 
             _inputActions.Player.SetCallbacks(this);
             _inputActions.UI.SetCallbacks(this);
@@ -48,6 +56,8 @@ namespace Services.Global
             _moveSubject = new Subject<Vector2>().AddTo(_disposables);
             _fireSubject = new Subject<Unit>().AddTo(_disposables);
             _submitSubject = new Subject<Unit>().AddTo(_disposables);
+            _singleSelectSubject = new Subject<Unit>().AddTo(_disposables);
+            _attackClickSubject = new Subject<Unit>().AddTo(_disposables);
         }
 
         public void SetDisableAll()
@@ -74,62 +84,46 @@ namespace Services.Global
             Debug.Log("InputManager Dispose");
         }
 
+
         public void OnMove(InputAction.CallbackContext context)
         {
             if (context.phase == InputActionPhase.Performed)
+            {
+                Debug.Log($"OnMove: {context.ReadValue<Vector2>()}");
                 _moveSubject.OnNext(context.ReadValue<Vector2>());
+            }
+            else if (context.phase == InputActionPhase.Canceled)
+            {
+                Debug.Log($"OnMove Canceled: {context.ReadValue<Vector2>()}");
+                _moveSubject.OnNext(Vector2.zero);
+            }
         }
 
-        public void OnLook(InputAction.CallbackContext context)
+        public void OnZoom(InputAction.CallbackContext context)
         {
+            Debug.Log($"OnSubmit: {context.phase}, {context.ReadValue<Vector2>()}");
         }
 
-        public void OnFire(InputAction.CallbackContext context)
+        public void OnSelectClick(InputAction.CallbackContext context)
         {
             if (context.phase == InputActionPhase.Performed)
-                _fireSubject.OnNext(Unit.Default);
+            {
+                _singleSelectSubject.OnNext(Unit.Default);
+            }
         }
 
-        public void OnNavigate(InputAction.CallbackContext context)
+        public void OnAttackClick(InputAction.CallbackContext context)
         {
+            Debug.Log($"OnAttackClick: {context.phase}");
+            if (context.phase == InputActionPhase.Performed)
+            {
+                _attackClickSubject.OnNext(Unit.Default);
+            }
         }
 
         public void OnSubmit(InputAction.CallbackContext context)
         {
-            if (context.phase == InputActionPhase.Performed)
-                _submitSubject.OnNext(Unit.Default);
-        }
-
-        public void OnCancel(InputAction.CallbackContext context)
-        {
-        }
-
-        public void OnPoint(InputAction.CallbackContext context)
-        {
-        }
-
-        public void OnClick(InputAction.CallbackContext context)
-        {
-        }
-
-        public void OnScrollWheel(InputAction.CallbackContext context)
-        {
-        }
-
-        public void OnMiddleClick(InputAction.CallbackContext context)
-        {
-        }
-
-        public void OnRightClick(InputAction.CallbackContext context)
-        {
-        }
-
-        public void OnTrackedDevicePosition(InputAction.CallbackContext context)
-        {
-        }
-
-        public void OnTrackedDeviceOrientation(InputAction.CallbackContext context)
-        {
+            Debug.Log($"OnSubmit: {context.phase}");
         }
     }
 
@@ -182,5 +176,7 @@ namespace Services.Global
         public IObservable<Vector2> MoveSubject { get; }
         public IObservable<Unit> FireSubject { get; }
         public IObservable<Unit> SubmitSubject { get; }
+        public IObservable<Unit> SingleSelectSubject { get; }
+        public IObservable<Unit> AttackClickSubject { get; }
     }
 }

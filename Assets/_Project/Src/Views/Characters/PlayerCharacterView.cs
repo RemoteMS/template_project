@@ -1,11 +1,12 @@
+using System;
+using Controllers.PlayerControls;
 using Reflex.Attributes;
-using Services.ModelViews;
 using UniRx;
 using UnityEngine;
 
 namespace Views.Characters
 {
-    public class PlayerCharacter : MonoBehaviour
+    public class PlayerCharacterView : MonoBehaviour
     {
         private IPlayerController _playerController;
 
@@ -16,7 +17,30 @@ namespace Views.Characters
         {
             Debug.LogWarning($"playerController Inject - {playerController}");
             _playerController = playerController;
-            _playerController.CharacterMovement.Subscribe(Move).AddTo(_disposable);
+
+            _playerController.CharacterMovement
+                .Subscribe(move => _currentMovement = move)
+                .AddTo(_disposable);
+        }
+
+        private void LateUpdate()
+        {
+            if (_currentMovement != Vector2.zero)
+            {
+                Move();
+            }
+        }
+
+        private void Move()
+        {
+            transform.position += new Vector3(_currentMovement.x, 0f, _currentMovement.y) * Time.deltaTime;
+        }
+
+        private Vector2 _currentMovement = Vector2.zero;
+
+        private void MoveChange(Vector2 move)
+        {
+            _currentMovement = move;
         }
 
         private void Move(Vector2 move)
@@ -30,6 +54,5 @@ namespace Views.Characters
         {
             _disposable?.Dispose();
         }
-
     }
 }

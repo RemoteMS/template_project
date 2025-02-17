@@ -1,0 +1,18 @@
+{
+    "name": "GlobalServices",
+    "rootNamespace": "",
+    "references": [
+        "GUID:24b1bf6aafaf40a3845c264c9aa49eb0",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
