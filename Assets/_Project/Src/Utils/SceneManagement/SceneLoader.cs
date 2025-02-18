@@ -2,6 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using Controllers.PlayerControls;
+using Services.Gameplay.Units;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.ResourceProviders;
@@ -99,6 +100,8 @@ namespace Utils.SceneManagement
                     typeof(PlayerController),
                     new[] { typeof(IPlayerController), typeof(PlayerController) }
                 );
+
+                builder.AddSingleton(typeof(ExistUintsService), typeof(ExistUintsService));
             });
 
             await _currentSceneInstance.Value.ActivateAsync();

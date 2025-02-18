@@ -62,6 +62,15 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MouseMoving"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""6333d4ae-0d8f-4f19-9afd-5fbc49f5d3bc"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -163,6 +172,17 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""SelectClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7a0b4bf1-7753-492e-87dc-822fbe733de1"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseMoving"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -203,6 +223,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
         m_Player_SelectClick = m_Player.FindAction("SelectClick", throwIfNotFound: true);
         m_Player_AttackClick = m_Player.FindAction("AttackClick", throwIfNotFound: true);
+        m_Player_MouseMoving = m_Player.FindAction("MouseMoving", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
@@ -277,6 +298,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Zoom;
     private readonly InputAction m_Player_SelectClick;
     private readonly InputAction m_Player_AttackClick;
+    private readonly InputAction m_Player_MouseMoving;
     public struct PlayerActions
     {
         private @GameInputActions m_Wrapper;
@@ -285,6 +307,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
         public InputAction @SelectClick => m_Wrapper.m_Player_SelectClick;
         public InputAction @AttackClick => m_Wrapper.m_Player_AttackClick;
+        public InputAction @MouseMoving => m_Wrapper.m_Player_MouseMoving;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -306,6 +329,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @AttackClick.started += instance.OnAttackClick;
             @AttackClick.performed += instance.OnAttackClick;
             @AttackClick.canceled += instance.OnAttackClick;
+            @MouseMoving.started += instance.OnMouseMoving;
+            @MouseMoving.performed += instance.OnMouseMoving;
+            @MouseMoving.canceled += instance.OnMouseMoving;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -322,6 +348,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @AttackClick.started -= instance.OnAttackClick;
             @AttackClick.performed -= instance.OnAttackClick;
             @AttackClick.canceled -= instance.OnAttackClick;
+            @MouseMoving.started -= instance.OnMouseMoving;
+            @MouseMoving.performed -= instance.OnMouseMoving;
+            @MouseMoving.canceled -= instance.OnMouseMoving;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -391,6 +420,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         void OnZoom(InputAction.CallbackContext context);
         void OnSelectClick(InputAction.CallbackContext context);
         void OnAttackClick(InputAction.CallbackContext context);
+        void OnMouseMoving(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

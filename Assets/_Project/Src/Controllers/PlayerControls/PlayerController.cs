@@ -9,6 +9,7 @@ namespace Controllers.PlayerControls
     public interface IPlayerController
     {
         IReadOnlyReactiveProperty<Vector2> CharacterMovement { get; }
+        IReadOnlyReactiveProperty<Vector2> MousePosition { get; }
     }
 
     public class PlayerController : IPlayerController, IDisposable
@@ -16,12 +17,16 @@ namespace Controllers.PlayerControls
         private readonly IInputManager _inputManager;
 
         public IReadOnlyReactiveProperty<Vector2> CharacterMovement => _characterMovement;
-        private ReactiveProperty<Vector2> _characterMovement;
+        private readonly ReactiveProperty<Vector2> _characterMovement;
+
+        public IReadOnlyReactiveProperty<Vector2> MousePosition => _mousePosition;
+        private readonly ReactiveProperty<Vector2> _mousePosition;
 
         [ReflexConstructor]
         public PlayerController(IInputManager inputManager)
         {
             _characterMovement = new ReactiveProperty<Vector2>(Vector2.zero).AddTo(_disposables);
+            _mousePosition = new ReactiveProperty<Vector2>(Vector2.zero).AddTo(_disposables);
 
             Debug.LogWarning("PlayerController ctor");
             _inputManager = inputManager;
@@ -36,6 +41,13 @@ namespace Controllers.PlayerControls
 
             _inputManager.SingleSelectSubject
                 .Subscribe(_ => { Debug.LogWarning("PlayerController single select"); })
+                .AddTo(_disposables);
+
+            _inputManager.MouseMoveSubject
+                .Subscribe(newVal =>
+                {
+                    _mousePosition.Value = newVal;
+                })
                 .AddTo(_disposables);
         }
 

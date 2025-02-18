@@ -12,6 +12,7 @@ namespace Services.Global
         IObservable<Unit> SubmitSubject { get; }
         IObservable<Unit> SingleSelectSubject { get; }
         IObservable<Unit> AttackClickSubject { get; }
+        IObservable<Vector2> MouseMoveSubject { get; }
     }
 
     public class InputManager : IInputManager, IDisposable,
@@ -33,8 +34,10 @@ namespace Services.Global
         public IObservable<Unit> AttackClickSubject => _attackClickSubject;
         private Subject<Unit> _attackClickSubject;
 
-        private readonly GameInputActions _inputActions;
+        public IObservable<Vector2> MouseMoveSubject => _mouseMoveSubject;
+        private Subject<Vector2> _mouseMoveSubject;
 
+        private readonly GameInputActions _inputActions;
         private readonly CompositeDisposable _disposables = new();
 
         public InputManager()
@@ -58,6 +61,7 @@ namespace Services.Global
             _submitSubject = new Subject<Unit>().AddTo(_disposables);
             _singleSelectSubject = new Subject<Unit>().AddTo(_disposables);
             _attackClickSubject = new Subject<Unit>().AddTo(_disposables);
+            _mouseMoveSubject = new Subject<Vector2>().AddTo(_disposables);
         }
 
         public void SetDisableAll()
@@ -114,10 +118,17 @@ namespace Services.Global
 
         public void OnAttackClick(InputAction.CallbackContext context)
         {
-            Debug.Log($"OnAttackClick: {context.phase}");
             if (context.phase == InputActionPhase.Performed)
             {
                 _attackClickSubject.OnNext(Unit.Default);
+            }
+        }
+
+        public void OnMouseMoving(InputAction.CallbackContext context)
+        {
+            if (context.phase == InputActionPhase.Performed)
+            {
+                _mouseMoveSubject.OnNext(context.ReadValue<Vector2>());
             }
         }
 
@@ -178,5 +189,6 @@ namespace Services.Global
         public IObservable<Unit> SubmitSubject { get; }
         public IObservable<Unit> SingleSelectSubject { get; }
         public IObservable<Unit> AttackClickSubject { get; }
+        public IObservable<Vector2> MouseMoveSubject { get; }
     }
 }

@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9d2bc0d69a14b14b78a6eff92018865, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _camera: {fileID: 822707762726394924}
 --- !u!1 &3660998308585785424
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,7 +59,7 @@ GameObject:
   - component: {fileID: 8315800877002524118}
   - component: {fileID: 7884584190832551985}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: CharacterCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72,13 +73,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3660998308585785424}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.44852844, y: 0.34549937, z: -0.19339846, w: -0.8012799}
-  m_LocalPosition: {x: 1.5151016, y: 3.3970063, z: -1.4302629}
+  m_LocalRotation: {x: 0.46174863, y: 0, z: 0, w: 0.8870109}
+  m_LocalPosition: {x: 0, y: 5, z: -3.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 597155941405912404}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 55, y: 0, z: 0}
 --- !u!20 &822707762726394924
 Camera:
   m_ObjectHideFlags: 0

@@ -8,9 +8,16 @@ namespace Views.Characters
 {
     public class PlayerCharacterView : MonoBehaviour
     {
+        public Camera Camera => _camera;
+        [SerializeField] private Camera _camera;
+
         private IPlayerController _playerController;
 
         private readonly CompositeDisposable _disposable = new();
+
+        private ReactiveProperty<GameObject> _selectedSelectable;
+
+        private Vector2 _lastMousePosition = Vector2.zero;
 
         [Inject]
         public void Inject(IPlayerController playerController)
@@ -21,6 +28,16 @@ namespace Views.Characters
             _playerController.CharacterMovement
                 .Subscribe(move => _currentMovement = move)
                 .AddTo(_disposable);
+
+            _playerController.MousePosition
+                .Subscribe(newVal =>
+                {
+                    Debug.Log($"_playerController.MousePosition: {newVal}");
+                    _lastMousePosition = newVal;
+                })
+                .AddTo(_disposable);
+
+            _selectedSelectable = new ReactiveProperty<GameObject>().AddTo(_disposable);
         }
 
         private void LateUpdate()
@@ -29,6 +46,17 @@ namespace Views.Characters
             {
                 Move();
             }
+
+            DoRaycast();
+        }
+
+        private void DoRaycast()
+        {
+            var ray = _camera.ScreenPointToRay(_lastMousePosition);
+            var start = _camera.transform.position;
+            var end = ray.GetPoint(10f);
+
+            Debug.DrawLine(start, end, Color.red);
         }
 
         private void Move()
