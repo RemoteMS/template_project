@@ -6,12 +6,7 @@ namespace Services.Global
     {
     }
 
-    public interface ITestListenerService
-    {
-    }
-
-
-    public class EventListenerService : IEventListenerService, ITestListenerService, IDisposable
+    public class EventListenerService : IEventListenerService, IDisposable
     {
         public void Dispose()
         {

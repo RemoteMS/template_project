@@ -49,8 +49,6 @@ namespace DI
 
             builder.AddSingleton(typeof(EventListenerService), new Type[]
             {
-                typeof(EventListenerService),
-                typeof(ITestListenerService),
                 typeof(IEventListenerService),
                 typeof(IDisposable),
             });

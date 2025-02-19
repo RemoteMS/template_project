@@ -13,6 +13,7 @@ namespace Services.Global
         IObservable<Unit> SingleSelectSubject { get; }
         IObservable<Unit> AttackClickSubject { get; }
         IObservable<Vector2> MouseMoveSubject { get; }
+        IObservable<bool> ShiftPressedSubject { get; }
     }
 
     public class InputManager : IInputManager, IDisposable,
@@ -36,6 +37,9 @@ namespace Services.Global
 
         public IObservable<Vector2> MouseMoveSubject => _mouseMoveSubject;
         private Subject<Vector2> _mouseMoveSubject;
+
+        public IObservable<bool> ShiftPressedSubject => _shiftPressedSubject;
+        private Subject<bool> _shiftPressedSubject;
 
         private readonly GameInputActions _inputActions;
         private readonly CompositeDisposable _disposables = new();
@@ -62,6 +66,7 @@ namespace Services.Global
             _singleSelectSubject = new Subject<Unit>().AddTo(_disposables);
             _attackClickSubject = new Subject<Unit>().AddTo(_disposables);
             _mouseMoveSubject = new Subject<Vector2>().AddTo(_disposables);
+            _shiftPressedSubject = new Subject<bool>().AddTo(_disposables);
         }
 
         public void SetDisableAll()
@@ -105,7 +110,6 @@ namespace Services.Global
 
         public void OnZoom(InputAction.CallbackContext context)
         {
-            Debug.Log($"OnSubmit: {context.phase}, {context.ReadValue<Vector2>()}");
         }
 
         public void OnSelectClick(InputAction.CallbackContext context)
@@ -129,6 +133,18 @@ namespace Services.Global
             if (context.phase == InputActionPhase.Performed)
             {
                 _mouseMoveSubject.OnNext(context.ReadValue<Vector2>());
+            }
+        }
+
+        public void OnShift(InputAction.CallbackContext context)
+        {
+            if (context.phase == InputActionPhase.Performed)
+            {
+                _shiftPressedSubject.OnNext(true);
+            }
+            else if (context.phase == InputActionPhase.Canceled)
+            {
+                _shiftPressedSubject.OnNext(false);
             }
         }
 
@@ -190,5 +206,6 @@ namespace Services.Global
         public IObservable<Unit> SingleSelectSubject { get; }
         public IObservable<Unit> AttackClickSubject { get; }
         public IObservable<Vector2> MouseMoveSubject { get; }
+        public IObservable<bool> ShiftPressedSubject { get; }
     }
 }

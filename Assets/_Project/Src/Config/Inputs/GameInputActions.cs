@@ -71,6 +71,15 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shift"",
+                    ""type"": ""Button"",
+                    ""id"": ""a81860c8-9f7c-4d7c-9d11-97a1f23e30f8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -183,6 +192,17 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""MouseMoving"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""440c8a69-a305-4810-a74b-52c9fad26d16"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shift"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -224,6 +244,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         m_Player_SelectClick = m_Player.FindAction("SelectClick", throwIfNotFound: true);
         m_Player_AttackClick = m_Player.FindAction("AttackClick", throwIfNotFound: true);
         m_Player_MouseMoving = m_Player.FindAction("MouseMoving", throwIfNotFound: true);
+        m_Player_Shift = m_Player.FindAction("Shift", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
@@ -299,6 +320,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_SelectClick;
     private readonly InputAction m_Player_AttackClick;
     private readonly InputAction m_Player_MouseMoving;
+    private readonly InputAction m_Player_Shift;
     public struct PlayerActions
     {
         private @GameInputActions m_Wrapper;
@@ -308,6 +330,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         public InputAction @SelectClick => m_Wrapper.m_Player_SelectClick;
         public InputAction @AttackClick => m_Wrapper.m_Player_AttackClick;
         public InputAction @MouseMoving => m_Wrapper.m_Player_MouseMoving;
+        public InputAction @Shift => m_Wrapper.m_Player_Shift;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -332,6 +355,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @MouseMoving.started += instance.OnMouseMoving;
             @MouseMoving.performed += instance.OnMouseMoving;
             @MouseMoving.canceled += instance.OnMouseMoving;
+            @Shift.started += instance.OnShift;
+            @Shift.performed += instance.OnShift;
+            @Shift.canceled += instance.OnShift;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -351,6 +377,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @MouseMoving.started -= instance.OnMouseMoving;
             @MouseMoving.performed -= instance.OnMouseMoving;
             @MouseMoving.canceled -= instance.OnMouseMoving;
+            @Shift.started -= instance.OnShift;
+            @Shift.performed -= instance.OnShift;
+            @Shift.canceled -= instance.OnShift;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -421,6 +450,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         void OnSelectClick(InputAction.CallbackContext context);
         void OnAttackClick(InputAction.CallbackContext context);
         void OnMouseMoving(InputAction.CallbackContext context);
+        void OnShift(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

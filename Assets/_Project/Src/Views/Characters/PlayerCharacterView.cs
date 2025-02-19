@@ -1,6 +1,6 @@
-using System;
 using Controllers.PlayerControls;
 using Reflex.Attributes;
+using Services.Gameplay.Units;
 using UniRx;
 using UnityEngine;
 
@@ -8,6 +8,8 @@ namespace Views.Characters
 {
     public class PlayerCharacterView : MonoBehaviour
     {
+        [SerializeField] private LayerMask selectionLayerMask;
+
         public Camera Camera => _camera;
         [SerializeField] private Camera _camera;
 
@@ -30,11 +32,7 @@ namespace Views.Characters
                 .AddTo(_disposable);
 
             _playerController.MousePosition
-                .Subscribe(newVal =>
-                {
-                    Debug.Log($"_playerController.MousePosition: {newVal}");
-                    _lastMousePosition = newVal;
-                })
+                .Subscribe(newVal => { _lastMousePosition = newVal; })
                 .AddTo(_disposable);
 
             _selectedSelectable = new ReactiveProperty<GameObject>().AddTo(_disposable);
@@ -57,6 +55,16 @@ namespace Views.Characters
             var end = ray.GetPoint(10f);
 
             Debug.DrawLine(start, end, Color.red);
+
+            if (Physics.Linecast(start, end, out var hit, selectionLayerMask))
+            {
+                var selectedUnit = hit.collider.gameObject.GetComponent<UnitSelectionColliderBinder>();
+                _playerController.MouseHoveredSelectable(selectedUnit);
+            }
+            else
+            {
+                _playerController.NothingHovered();
+            }
         }
 
         private void Move()
@@ -65,18 +73,6 @@ namespace Views.Characters
         }
 
         private Vector2 _currentMovement = Vector2.zero;
-
-        private void MoveChange(Vector2 move)
-        {
-            _currentMovement = move;
-        }
-
-        private void Move(Vector2 move)
-        {
-            Debug.LogWarning($"Move from {transform.position} to {move}");
-            transform.position += new Vector3(move.x, 0f, move.y) * Time.deltaTime;
-        }
-
 
         private void OnDestroy()
         {

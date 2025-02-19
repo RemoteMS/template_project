@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using Controllers.PlayerControls;
 using Services.Gameplay.Units;
+using Storage;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.ResourceProviders;
@@ -88,6 +89,8 @@ namespace Utils.SceneManagement
             {
                 builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartGameplay)}");
 
+                builder.AddSingleton(new GameplayState(), new[] { typeof(IDisposable), typeof(GameplayState) });
+
                 builder.AddSingleton(typeof(GameplayModelView), new[]
                 {
                     typeof(GameplayModelView),
@@ -95,6 +98,11 @@ namespace Utils.SceneManagement
                     typeof(IDisposable),
                     typeof(IGameplayModelView)
                 });
+
+                builder.AddSingleton(
+                    typeof(UnitSelectionManager),
+                    new[] { typeof(UnitSelectionManager) }
+                );
 
                 builder.AddSingleton(
                     typeof(PlayerController),

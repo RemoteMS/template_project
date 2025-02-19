@@ -16,9 +16,6 @@ namespace Views
 
         private void Start()
         {
-            // var sceneContainer = gameObject.scene.GetSceneContainer();
-            // _gameplayModelView = sceneContainer.Resolve<GameplayModelView>();
-
             toMainMenuButton.OnClickAsObservable().Subscribe(
                 _ =>
                 {
