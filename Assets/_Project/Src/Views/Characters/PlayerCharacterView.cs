@@ -3,11 +3,13 @@ using Reflex.Attributes;
 using Services.Gameplay.Units;
 using UniRx;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Views.Characters
 {
     public class PlayerCharacterView : MonoBehaviour
     {
+        [SerializeField] private LayerMask uiLayerMask;
         [SerializeField] private LayerMask selectionLayerMask;
 
         public Camera Camera => _camera;
@@ -20,6 +22,7 @@ namespace Views.Characters
         private ReactiveProperty<GameObject> _selectedSelectable;
 
         private Vector2 _lastMousePosition = Vector2.zero;
+        private ReactiveProperty<bool> _hittenUI;
 
         [Inject]
         public void Inject(IPlayerController playerController)
@@ -36,6 +39,11 @@ namespace Views.Characters
                 .AddTo(_disposable);
 
             _selectedSelectable = new ReactiveProperty<GameObject>().AddTo(_disposable);
+
+            _hittenUI = new ReactiveProperty<bool>(false).AddTo(_disposable);
+            _hittenUI.DistinctUntilChanged()
+                .Subscribe(newVal => { _playerController.HoverUI(newVal); })
+                .AddTo(_disposable);
         }
 
         private void LateUpdate()
@@ -50,6 +58,17 @@ namespace Views.Characters
 
         private void DoRaycast()
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                _hittenUI.Value = true;
+                return;
+            }
+            else
+            {
+                _hittenUI.Value = false;
+            }
+
+
             var ray = _camera.ScreenPointToRay(_lastMousePosition);
             var start = _camera.transform.position;
             var end = ray.GetPoint(10f);
@@ -58,6 +77,13 @@ namespace Views.Characters
 
             if (Physics.Linecast(start, end, out var hit, selectionLayerMask))
             {
+                // ui been hit. Don't respond
+                if (((1 << hit.collider.gameObject.layer) & uiLayerMask) == 0)
+                {
+                    Debug.LogWarning("UI hitten 1");
+                    // return;
+                }
+
                 var selectedUnit = hit.collider.gameObject.GetComponent<UnitSelectionColliderBinder>();
                 _playerController.MouseHoveredSelectable(selectedUnit);
             }

@@ -14,10 +14,13 @@ namespace Controllers.PlayerControls
 
         void MouseHoveredSelectable(UnitSelectionColliderBinder selectedUnit);
         void NothingHovered();
+        void HoverUI(bool isHovered);
     }
 
     public class PlayerController : IPlayerController, IDisposable
     {
+        private const int CameraSpeed = 5;
+
         private readonly UnitSelectionManager _unitSelectionManager;
         private readonly IInputManager _inputManager;
 
@@ -43,8 +46,19 @@ namespace Controllers.PlayerControls
             _hoveredUnit = null;
         }
 
+        private bool _uiHovered = false;
+
+        public void HoverUI(bool isHovered)
+        {
+            Debug.LogWarning($"isHovered - {isHovered}");
+            _uiHovered = isHovered;
+        }
+
+
         private void OnSelectUnit()
         {
+            if (_uiHovered) return;
+
             if (_hoveredUnit)
             {
                 if (!_shiftPressed.Value)
@@ -95,7 +109,7 @@ namespace Controllers.PlayerControls
 
         private void PrepareMovement(Vector2 value)
         {
-            _characterMovement.Value = value;
+            _characterMovement.Value = value * CameraSpeed;
         }
 
         public void Dispose()
