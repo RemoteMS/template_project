@@ -1,6 +1,7 @@
 using Reflex.Attributes;
 using Services.Gameplay.Units;
 using Storage;
+using Unity.Behavior;
 using UnityEngine;
 
 namespace Views.Binders
@@ -11,13 +12,15 @@ namespace Views.Binders
         [SerializeField] private GameObject selectionCircle;
         [SerializeField] private Unit selfData;
         [SerializeField] private UnitSelectionColliderBinder selfSelection;
+        [SerializeField] private BehaviorGraphAgent selfAgent;
 
         [Inject]
         public void Bind(GameplayState state)
         {
             selfData.SetSelectionCircle(selectionCircle);
-            Debug.Log("Bind");
             selfData.Init();
+            Debug.Log("Bind");
+
             state.AddUnit(selfData);
         }
     }
