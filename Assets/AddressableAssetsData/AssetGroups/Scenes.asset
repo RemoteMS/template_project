@@ -27,6 +27,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a0d228f10bebc4f8cbea440d358e3ea3
+    m_Address: TestUIScene
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - test
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a3864fc84521a49c4b864bcb796b0b4e
     m_Address: Boot
     m_ReadOnly: 0

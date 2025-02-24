@@ -1,13 +1,10 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
-using Controllers.PlayerControls;
-using Services.Gameplay.Units;
-using Storage;
+using DI.SceneContainerBuilders;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.ResourceProviders;
-using Views;
 
 namespace Utils.SceneManagement
 {
@@ -63,18 +60,8 @@ namespace Utils.SceneManagement
 
             _currentSceneInstance = await loading.Task;
 
-            ReflexSceneManager.PreInstallScene(_currentSceneInstance.Value.Scene, builder =>
-            {
-                Debug.Log($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}");
-                builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartMainMenu)}");
-                builder.AddSingleton(typeof(MainMenuModelView), new[]
-                {
-                    typeof(MainMenuModelView),
-                    typeof(IModelView),
-                    typeof(IDisposable),
-                    typeof(IMainMenuModelView),
-                });
-            });
+            var parameters = new MainMenuSceneParameters();
+            ReflexSceneManager.PreInstallScene(_currentSceneInstance.Value.Scene, parameters.Configure);
 
             await _currentSceneInstance.Value.ActivateAsync();
         }
@@ -85,32 +72,8 @@ namespace Utils.SceneManagement
 
             _currentSceneInstance = await loading.Task;
 
-            ReflexSceneManager.PreInstallScene(_currentSceneInstance.Value.Scene, builder =>
-            {
-                builder.SetName($"LoadedFrom_{nameof(AsyncLoadAndStartGameplay)}");
-
-                builder.AddSingleton(new GameplayState(), new[] { typeof(IDisposable), typeof(GameplayState) });
-
-                builder.AddSingleton(typeof(GameplayModelView), new[]
-                {
-                    typeof(GameplayModelView),
-                    typeof(IModelView),
-                    typeof(IDisposable),
-                    typeof(IGameplayModelView)
-                });
-
-                builder.AddSingleton(
-                    typeof(UnitSelectionManager),
-                    new[] { typeof(UnitSelectionManager) }
-                );
-
-                builder.AddSingleton(
-                    typeof(PlayerController),
-                    new[] { typeof(IPlayerController), typeof(PlayerController) }
-                );
-
-                builder.AddSingleton(typeof(ExistUintsService), typeof(ExistUintsService));
-            });
+            var parameters = new GameplaySceneParameters();
+            ReflexSceneManager.PreInstallScene(_currentSceneInstance.Value.Scene, parameters.Configure);
 
             await _currentSceneInstance.Value.ActivateAsync();
         }
@@ -118,7 +81,6 @@ namespace Utils.SceneManagement
 
         public void Dispose()
         {
-            // TODO release managed resources here
         }
     }
 }

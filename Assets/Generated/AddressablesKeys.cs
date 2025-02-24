@@ -8,4 +8,5 @@ public static class AddressablesConstants
     public const string lost_hope = "lost_hope";
     public const string MainGameMixer = "MainGameMixer";
     public const string MainMenu = "MainMenu";
+    public const string TestUIScene = "TestUIScene";
 }
